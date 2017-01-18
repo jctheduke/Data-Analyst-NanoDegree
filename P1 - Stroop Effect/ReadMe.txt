@@ -1,1 +1,1 @@
-This project builds the Hypothesis for the Stroop Effect
+This folder will contain the solutions to atleast one problem posted in each bucket of InterviewBit
