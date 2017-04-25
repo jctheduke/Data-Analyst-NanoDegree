@@ -1,5 +1,6 @@
+
 ---
-title: "Project3"
+title: "White Wine Quality Analysis by Priyaranjan JC."
 output: html_document
 ---
 
@@ -7,22 +8,126 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+```{r Required Packages, echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+```
+Data set contains  white variants of the Portuguese "Vinho Verde" wine.
+Number of Instances of white wine - 4898.
+Number of Attributes: 11 + output attribute(quality)
+```{r Loading the Data Set, echo=FALSE, message=FALSE, warning=FALSE}
+wine <- read.csv("wineQualityWhites.csv")
+```
+**Description for Atrributes and Output Variable :**
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+* *X :* serial number for instances.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+* *fixed acidity: *most acids involved with wine or fixed or nonvolatile (do not evaporate readily)
 
-```{r cars}
-summary(cars)
+* *volatile acidity: *the amount of acetic acid in wine, which at too high of levels can lead to an unpleasant, vinegar taste
+
+* *citric acid:* found in small quantities, citric acid can add 'freshness' and flavor to wines
+
+* *residual sugar:* the amount of sugar remaining after fermentation stops, it's rare to find wines with less than 1 gram/liter and wines with greater than 45 grams/liter are considered sweet
+
+* *chlorides:* the amount of salt in the wine
+
+* *free sulfur dioxide:* the free form of SO2 exists in equilibrium between molecular SO2 (as a dissolved gas) and bisulfite ion; it prevents microbial growth and the oxidation of wine
+
+* *total sulfur dioxide:* amount of free and bound forms of S02; in low concentrations, SO2 is mostly undetectable in wine, but at free SO2 concentrations over 50 ppm, SO2 becomes evident in the nose and taste of wine
+
+* *density:* the density of water is close to that of water depending on the percent alcohol and sugar content
+
+* *pH:* describes how acidic or basic a wine is on a scale from 0 (very acidic) to 14 (very basic); most wines are between 3-4 on the pH scale
+
+* *sulphates:* a wine additive which can contribute to sulfur dioxide gas (S02) levels, wich acts as an antimicrobial and antioxidant
+
+* *alcohol:* the percent alcohol content of the wine
+
+
+* *quality :* Contains a score between 0 and 10.
+
+# Univariate Plots Section
+```{r Name and type of the variables, echo=FALSE, message=FALSE, warning=FALSE}
+# Dropping X ,as it is just a serial number and does not hold any valuable information.
+wine <- wine[,2:13]
+str(wine)
+```
+```{r Summary of attributes, echo=FALSE, message=FALSE, warning=FALSE}
+summary(wine)
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r Correlation between quality and other variables, echo=FALSE, message=FALSE, warning=FALSE}
+cor(x = wine, y = wine$quality)
+# converting quality as a factor
+wine$quality <- factor(wine$quality)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r Historgram plot of quality, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= quality),data = wine)+geom_bar()+ggtitle(label = "Distribution of Wine Quality")
+```
+
+Quality variable is unbalanced.It follows a normal distribution.Wine having quality 6 is most common wine.
+
+```{r Distribution of alcohol, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= alcohol),data = wine)+
+  geom_histogram(binwidth = 0.1)+
+  ggtitle(label = "Distribution of Alcohol")+
+  scale_x_continuous(breaks = seq(8,14,0.5))
+```
+
+Distribution of alcohol as above.
+
+```{r Distribution of volatile.acidity, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= volatile.acidity),data = wine)+
+  geom_histogram(binwidth = 0.01)+
+  ggtitle(label = "Distribution of volatile.acidity")+
+  scale_x_continuous(breaks = seq(0.0800,1.1,0.1))
+```
+
+Considering only 0.95 quantile data(removing outliers) for visualization.
+
+```{r Distribution of volatile.acidity with 95 percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= volatile.acidity),data = wine)+
+  geom_histogram(binwidth = 0.01)+
+  ggtitle(label = "Distribution of volatile.acidity with 95th percentile")+
+  scale_x_continuous(breaks = seq(0.0800,1.1,0.05))+
+  coord_cartesian(xlim=c(0.08,quantile(wine$volatile.acidity,probs = 0.95)))
+```
+
+After removing outliers(95th percent quantile),we can observe that volatile.acidity follows a near normal distribution.
+```{r Distribution of density, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= density),data = wine)+
+  geom_histogram(binwidth = 0.0001)+
+  ggtitle(label = "Distribution of density")+
+  scale_x_continuous(breaks = seq(0.9871,1.0390,0.005))
+```
+
+```{r Distribution of density with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= density),data = wine)+
+  geom_histogram(binwidth = 0.0001)+
+  ggtitle(label = "Distribution of density with 95th percentile")+
+  scale_x_continuous(breaks = seq(0.9871,1.0390,0.005))+
+  coord_cartesian(xlim=c(min(wine$density),quantile(wine$density,probs = 0.95)))
+```
+
+After Removing the long tail,Density distribution looks more even.
+```{r Distribution of chlorides, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= chlorides),data = wine)+
+  geom_histogram(binwidth = 0.001)+
+  ggtitle(label = "Distribution of chlorides")+
+  scale_x_continuous(breaks = seq(0.00900,0.34600,0.05))
+```
+
+```{r Distribution of chlorides with 95h percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= chlorides),data = wine)+
+  geom_histogram(binwidth = 0.001)+
+  ggtitle(label = "Distribution of chlorides with 95th percentile")+
+  scale_x_continuous(breaks = seq(0.00900,0.34600,0.05))+
+  coord_cartesian(xlim=c(min(wine$chlorides),quantile(wine$chlorides,probs = 0.95)))
+```
+
+Few of the data variables contains outlier values,does these values correspond to quality = 3 and quality=9 wines(having low values)? Is there a linear relationship between attribute and target variable(quality)?
+
+
