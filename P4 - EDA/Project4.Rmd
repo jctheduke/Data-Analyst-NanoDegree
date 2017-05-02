@@ -127,7 +127,7 @@ ggplot(aes(x= chlorides),data = wine)+
 ggplot(aes(x= chlorides),data = wine)+
   geom_histogram(binwidth = 0.001)+
   ggtitle(label = "Distribution of chlorides with 95th percentile")+
-  scale_x_continuous(breaks = seq(0.00900,0.34600,0.05))+
+  scale_x_continuous(breaks = seq(0.00900,0.05900,0.005))+
   coord_cartesian(xlim=c(min(wine$chlorides),quantile(wine$chlorides,probs = 0.95)))
 ```
 
@@ -135,3 +135,16 @@ Few of the data variables contains outlier values,does these values correspond t
 
 
 # Univariate Analysis
+
+### What is the structure of your dataset?
+There are total of 4898 white wine samples.
+There are 10 properties of the white wine which define the quality of the wine.
+
+Quality of the samples form a normal distribution with quality 6 as the most common quality.
+alcohol,density and chlorides are the most correlated with the quality.
+Most of the wines has the alcohol content of 9.5 and alcohol percent continues to increase till 14% with decreasing count of samples.
+Most of the wine has density between 0.9871 and 1.Few wines are above density 1.
+chlorides are distributed between in the range of 0.009 and 0.309.But majority of wines are in the range of 0.029 and 0.054.
+
+
+### What is/are the main feature(s) of interest in your dataset?
