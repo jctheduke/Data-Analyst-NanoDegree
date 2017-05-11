@@ -128,6 +128,61 @@ ggplot(aes(x= citric.acid),data = wine)+
   scale_x_continuous(breaks = seq(0,1.5,0.05))+
   coord_cartesian(xlim=c(quantile(wine$citric.acid,probs = 0.05),quantile(wine$citric.acid,probs = 0.95)))
 ```
+Between 5th and 95th percentile, citric acid moslty follows normal distribution.
+
+#### Residual sugar
+```{r Distribution of Residual Sugar, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= residual.sugar),data = wine)+
+  geom_histogram(binwidth = 0.1)+
+  ggtitle(label = "Distribution of Residaul Sugar")+
+  scale_x_continuous(breaks = seq(1,66,5))
+```
+Most of the values in Resudual sugar are between 0-20.But there are few very large values.
+
+```{r Distribution of Residual Sugar between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= residual.sugar),data = wine)+
+  geom_histogram(binwidth = 0.1)+
+  ggtitle(label = "Distribution of Residaul Sugar between 5th and 9th percentile.")+
+  scale_x_continuous(breaks = seq(1,16,1))+
+  coord_cartesian(xlim=c(quantile(wine$residual.sugar,probs = 0.05),quantile(wine$residual.sugar,probs = 0.95)))
+```
+Lot of the wines has residual sugar values of  around 1.5 and residual values are uniformly distributed from 3 to 16.
+
+#### chlorides
+```{r Distribution of chlorides, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= chlorides),data = wine)+
+  geom_histogram(binwidth = 0.001)+
+  ggtitle(label = "Distribution of chlorides")+
+  scale_x_continuous(breaks = seq(0.00900,0.34600,0.05))
+```
+
+```{r Distribution of chlorides between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= chlorides),data = wine)+
+  geom_histogram(binwidth = 0.001)+
+  ggtitle(label = "Distribution of chlorides between 5th and 95th percentile")+
+  scale_x_continuous(breaks = seq(0.00900,0.05900,0.005))+
+  coord_cartesian(xlim=c(quantile(wine$chlorides,probs = 0.05),quantile(wine$chlorides,probs = 0.95)))
+```
+Chlorides between 5th and 95th percentile has normal distribution.
+
+#### Free sulphur dioxide
+```{r Distribution of Free sulphur dioxide, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= free.sulfur.dioxide),data = wine)+
+  geom_histogram(binwidth = 1)+
+  ggtitle(label = "Distribution of Free sulphur dioxide")+
+  scale_x_continuous(breaks = seq(0,300,20))
+```
+Most of free sulfur dioxide content is between rangte 0 and 80. There are few very high values of free.sulfur.dioxide.
+
+```{r Distribution of Free sulphur dioxide between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= free.sulfur.dioxide),data = wine)+
+  geom_histogram(binwidth = 1)+
+  ggtitle(label = "Distribution of Free sulphur dioxide between 5th and 95th percentile")+
+  scale_x_continuous(breaks = seq(0,70,5))+
+  coord_cartesian(xlim=c(quantile(wine$free.sulfur.dioxide,probs = 0.05),quantile(wine$free.sulfur.dioxide,probs = 0.95)))
+  
+```
+Between 5th and 95th percentile of free.sulfur.dioxide values follow a normal distribution.
 
 #### Alcohol
 ```{r Distribution of alcohol, echo=FALSE, message=FALSE, warning=FALSE}
@@ -157,20 +212,8 @@ ggplot(aes(x= density),data = wine)+
 ```
 
 After Removing the long tail,Density distribution looks more even.
-```{r Distribution of chlorides, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= chlorides),data = wine)+
-  geom_histogram(binwidth = 0.001)+
-  ggtitle(label = "Distribution of chlorides")+
-  scale_x_continuous(breaks = seq(0.00900,0.34600,0.05))
-```
 
-```{r Distribution of chlorides with 95h percentile, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= chlorides),data = wine)+
-  geom_histogram(binwidth = 0.001)+
-  ggtitle(label = "Distribution of chlorides with 95th percentile")+
-  scale_x_continuous(breaks = seq(0.00900,0.05900,0.005))+
-  coord_cartesian(xlim=c(min(wine$chlorides),quantile(wine$chlorides,probs = 0.95)))
-```
+
 
 Few of the data variables contains outlier values,does these values correspond to quality = 3 and quality=9 wines(having low values)? Is there a linear relationship between attribute and target variable(quality)?
 
