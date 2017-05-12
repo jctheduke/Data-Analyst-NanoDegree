@@ -180,20 +180,25 @@ ggplot(aes(x= free.sulfur.dioxide),data = wine)+
   ggtitle(label = "Distribution of Free sulphur dioxide between 5th and 95th percentile")+
   scale_x_continuous(breaks = seq(0,70,5))+
   coord_cartesian(xlim=c(quantile(wine$free.sulfur.dioxide,probs = 0.05),quantile(wine$free.sulfur.dioxide,probs = 0.95)))
-  
 ```
 Between 5th and 95th percentile of free.sulfur.dioxide values follow a normal distribution.
-
-#### Alcohol
-```{r Distribution of alcohol, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= alcohol),data = wine)+
-  geom_histogram(binwidth = 0.1)+
-  ggtitle(label = "Distribution of Alcohol")+
-  scale_x_continuous(breaks = seq(8,14,0.5))
+#### Total sulfur dioxide
+```{r Distribution of total sulfur dioxide, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= total.sulfur.dioxide),data = wine)+
+  geom_histogram(binwidth = 1)+
+  ggtitle(label = "Distribution of total sulfur dioxide")+
+  scale_x_continuous(breaks = seq(0,400,50))
+```
+```{r Distribution of total sulfur dioxide between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= total.sulfur.dioxide),data = wine)+
+  geom_histogram(binwidth = 1)+
+  ggtitle(label = "Distribution of total sulfur dioxide between 5th and 95th percentile")+
+  scale_x_continuous(breaks = seq(0,210,10))+
+  coord_cartesian(xlim=c(quantile(wine$total.sulfur.dioxide,probs = 0.05),quantile(wine$total.sulfur.dioxide,probs = 0.95)))
 ```
 
-Distribution of alcohol as above.Range of the alcohol is between 8.5 and 14.
 
+#### Density
 
 ```{r Distribution of density, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= density),data = wine)+
@@ -210,8 +215,20 @@ ggplot(aes(x= density),data = wine)+
   scale_x_continuous(breaks = seq(0.9871,1.0390,0.005))+
   coord_cartesian(xlim=c(min(wine$density),quantile(wine$density,probs = 0.95)))
 ```
-
 After Removing the long tail,Density distribution looks more even.
+
+
+#### Alcohol
+```{r Distribution of alcohol, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= alcohol),data = wine)+
+  geom_histogram(binwidth = 0.1)+
+  ggtitle(label = "Distribution of Alcohol")+
+  scale_x_continuous(breaks = seq(8,14,0.5))
+```
+
+Distribution of alcohol as above.Range of the alcohol is between 8.5 and 14.
+
+
 
 
 
