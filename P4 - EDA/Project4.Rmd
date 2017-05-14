@@ -138,6 +138,15 @@ ggplot(aes(x= residual.sugar),data = wine)+
   scale_x_continuous(breaks = seq(1,66,5))
 ```
 Most of the values in Resudual sugar are between 0-20.But there are few very large values.
+```{r Distribution of Residual Sugar, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= residual.sugar),data = wine)+
+  geom_histogram(binwidth = 0.1)+
+  ggtitle(label = "Distribution of Residaul Sugar")+
+  scale_x_log10()+
+  coord_cartesian(xlim=c(quantile(wine$residual.sugar,probs = 0.05),quantile(wine$residual.sugar,probs = 0.95)))
+
+```
+
 
 ```{r Distribution of Residual Sugar between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= residual.sugar),data = wine)+
@@ -211,12 +220,44 @@ ggplot(aes(x= density),data = wine)+
 ```{r Distribution of density with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= density),data = wine)+
   geom_histogram(binwidth = 0.0001)+
-  ggtitle(label = "Distribution of density with 95th percentile")+
+  ggtitle(label = "Distribution of density between 5ht and 95th percentile")+
   scale_x_continuous(breaks = seq(0.9871,1.0390,0.005))+
-  coord_cartesian(xlim=c(min(wine$density),quantile(wine$density,probs = 0.95)))
+  coord_cartesian(xlim=c(quantile(wine$density,probs = 0.05),quantile(wine$density,probs = 0.95)))
 ```
-After Removing the long tail,Density distribution looks more even.
+After Removing the outliers,Density distribution is little closer to normal distribution.
 
+#### ph
+```{r Distribution of ph, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= pH),data = wine)+
+  geom_histogram(binwidth = 0.01)+
+  ggtitle(label = "Distribution of pH levels")+
+  scale_x_continuous(breaks = seq(2.7,3.8,0.1))
+```
+```{r Distribution of ph between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= pH),data = wine)+
+  geom_histogram(binwidth = 0.01)+
+  ggtitle(label = "Distribution of pH levels between 5th and 95th percentile")+
+  scale_x_continuous(breaks = seq(2.7,3.8,0.1))+
+  coord_cartesian(xlim=c(quantile(wine$pH,probs = 0.05),quantile(wine$pH,probs = 0.95)))
+```
+Between 5th and 95th percentile ,pH values follow a normal distribution.
+
+#### sulphates
+```{r Distribution of sulphates, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= sulphates),data = wine)+
+  geom_histogram(binwidth = 0.01)+
+  ggtitle(label = "Distribution of Sulphate values")+
+  scale_x_continuous(breaks = seq(0.2,1,0.05))
+```
+sulphate values lies between 0.2 and 1 values. Most of the suphate values are present between 0.35 to 0.65.
+```{r Distribution of sulphates between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= sulphates),data = wine)+
+  geom_histogram(binwidth = 0.01)+
+  ggtitle(label = "Distribution of sulphates values between 5th and 95th percentile")+
+  scale_x_continuous(breaks = seq(0.2,1,0.05))+
+  coord_cartesian(xlim=c(quantile(wine$sulphates,probs = 0.05),quantile(wine$sulphates,probs = 0.95)))
+```
+between 5th and 95th percentile ,sulphate values follow  a normal distribution.
 
 #### Alcohol
 ```{r Distribution of alcohol, echo=FALSE, message=FALSE, warning=FALSE}
@@ -225,14 +266,18 @@ ggplot(aes(x= alcohol),data = wine)+
   ggtitle(label = "Distribution of Alcohol")+
   scale_x_continuous(breaks = seq(8,14,0.5))
 ```
+Range of the alcohol is between 8.5 and 14.
 
-Distribution of alcohol as above.Range of the alcohol is between 8.5 and 14.
+```{r Distribution of alcohol between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= alcohol),data = wine)+
+  geom_histogram(binwidth = 0.1)+
+  ggtitle(label = "Distribution of Alcohol between 5th and 95th percentile.")+
+  scale_x_continuous(breaks = seq(8,14,0.25))+
+  coord_cartesian(xlim=c(quantile(wine$alcohol,probs = 0.05),quantile(wine$alcohol,probs = 0.95)))
+```
+Most of the values of the alcohol are present between 8.75 and 12.75.
 
 
-
-
-
-Few of the data variables contains outlier values,does these values correspond to quality = 3 and quality=9 wines(having low values)? Is there a linear relationship between attribute and target variable(quality)?
 
 
 # Univariate Analysis
