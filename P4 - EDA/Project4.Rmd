@@ -28,7 +28,7 @@ wine <- read.csv("wineQualityWhites.csv")
 
 * *citric acid:* found in small quantities, citric acid can add 'freshness' and flavor to wines
 
-* *residual sugar:* the amount of sugar remaining after fermentation stops, it's rare to find wines with less than 1 gram/liter and wines with greater than 45 grams/liter are considered sweet
+* *residual sugar:* the amount of sugar remaining after fermentation stops, it's rare to find wines with less than 1 gram/liter and wines with greater than 45 grams/liter are considered sweet.
 
 * *chlorides:* the amount of salt in the wine
 
@@ -40,7 +40,7 @@ wine <- read.csv("wineQualityWhites.csv")
 
 * *pH:* describes how acidic or basic a wine is on a scale from 0 (very acidic) to 14 (very basic); most wines are between 3-4 on the pH scale
 
-* *sulphates:* a wine additive which can contribute to sulfur dioxide gas (S02) levels, wich acts as an antimicrobial and antioxidant
+* *sulphates:* a wine additive which can contribute to sulfur dioxide gas (S02) levels, which acts as an antimicrobial and antioxidant
 
 * *alcohol:* the percent alcohol content of the wine
 
@@ -138,15 +138,13 @@ ggplot(aes(x= residual.sugar),data = wine)+
   scale_x_continuous(breaks = seq(1,66,5))
 ```
 Most of the values in Resudual sugar are between 0-20.But there are few very large values.
-```{r Distribution of Residual Sugar, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Distribution of Residual Sugar in log scale, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= residual.sugar),data = wine)+
-  geom_histogram(binwidth = 0.1)+
-  ggtitle(label = "Distribution of Residaul Sugar")+
-  scale_x_log10()+
-  coord_cartesian(xlim=c(quantile(wine$residual.sugar,probs = 0.05),quantile(wine$residual.sugar,probs = 0.95)))
-
+  geom_histogram(binwidth = 0.05)+
+  ggtitle(label = "Distribution of Residaul Sugar in log scale")+
+  scale_x_log10(breaks = seq(0,66,10))
 ```
-
+In log x axis scale, residual sugar follows a bimodal distribution.
 
 ```{r Distribution of Residual Sugar between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= residual.sugar),data = wine)+
@@ -277,8 +275,26 @@ ggplot(aes(x= alcohol),data = wine)+
 ```
 Most of the values of the alcohol are present between 8.75 and 12.75.
 
+#### total acidity
+```{r total acidity in wine, echo=FALSE, message=FALSE, warning=FALSE}
+wine <- transform(wine,total.acidity = wine$fixed.acidity + wine$volatile.acidity)
+```
+```{r Distribution of total acidity, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= wine$total.acidity),data = wine)+
+  geom_histogram(binwidth = 0.01)+
+  ggtitle(label = "Distribution of total acidity")+
+  scale_x_continuous(breaks = seq(4,12,0.5))
+```
+total acidity percent of wine is between 5.5 and 8.5.
 
-
+```{r Distribution of total acidity between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x= wine$total.acidity),data = wine)+
+  geom_histogram(binwidth = 0.01)+
+  ggtitle(label = "Distribution of total acidity")+
+  scale_x_continuous(breaks = seq(4,12,0.25))+
+  coord_cartesian(xlim=c(quantile(wine$total.acidity,probs = 0.05),quantile(wine$total.acidity,probs = 0.95)))
+```
+Between 5th and 95th percentile values total acidity  follows normal distribution.
 
 # Univariate Analysis
 
@@ -294,7 +310,16 @@ chlorides are distributed between in the range of 0.009 and 0.309.But majority o
 
 
 ### What is/are the main feature(s) of interest in your dataset?
-For density,chlorides,acidity values are mostly in the normal range,i.e with 2 standard deviation most of the data is covered.Will the data beyond 2 standard deviation correspond to either low or high quality wines?This has to be decided using further analysis.
+Almost all of the varialbes(except residual sugar) have a similar distribution.Values between 5th and 95th values follows a normal like distribution.All of the varialbes has values beyond 2 standard deviation from mean.
+Residual sugar forms a bimodal distribution when scaled by log across x-axis.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
+Volatile acidity, total sulphur dioxide,residual sugar are directly related to taste of the wine. Improper proportions of these will lead to bad taste of wine.
 
+### Did you create any new variables from existing variables in the dataset?
+Total acidity in the wine is created by combining fixed acidity and volatile acidity.
+Quality variable is changed from numeric format to factor type.
+
+### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
+
+All of the varialbes has few values beyond 3 standard deviatations from the mean.When observed between 5th and 95th values, most of these varialbes followed normal distribution.Does the values beyond 3 standard deviation,directly result in very poor or very good wine quality?,this has to futher investigated.
