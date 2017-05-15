@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r Required Packages, echo=FALSE, message=FALSE, warning=FALSE}
 library(ggplot2)
 library(dplyr)
+library(corrplot)
 ```
 Data set contains  white variants of the Portuguese "Vinho Verde" wine.
 Number of Instances of white wine - 4898.
@@ -60,8 +61,6 @@ summary(wine)
 
 ```{r Correlation between quality and other variables, echo=FALSE, message=FALSE, warning=FALSE}
 cor(x = wine, y = wine$quality)
-# converting quality as a factor
-wine$quality <- factor(wine$quality)
 ```
 #### Wine Quality
 ```{r Historgram plot of quality, echo=FALSE, message=FALSE, warning=FALSE}
@@ -323,3 +322,62 @@ Quality variable is changed from numeric format to factor type.
 ### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
 All of the varialbes has few values beyond 3 standard deviatations from the mean.When observed between 5th and 95th values, most of these varialbes followed normal distribution.Does the values beyond 3 standard deviation,directly result in very poor or very good wine quality?,this has to futher investigated.
+
+# Bivariate Plots Section
+
+Correlation plot between different variables.
+
+```{r Correlation between variables, echo=FALSE, message=FALSE, warning=FALSE}
+M <- cor(wine)
+corrplot.mixed(M,tl.pos = 'd')
+```
+
+```{r Correlation between fixed and volatile acidity, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=fixed.acidity,y=volatile.acidity),data=wine)+geom_point(alpha = 0.1)+
+ggtitle(label = "Scatterplot between volatile and fixed acidity")
+```
+Volatile acidity and fixed acidity does not have any correlation.
+
+```{r Correlation between density and residual sugar full data, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=residual.sugar,y=density),data=wine)+geom_point(alpha=0.05)+
+ggtitle(label = "Scatterplot between density and resiudal sugar")
+```
+There is clearly a positive correlation between density and residual sugar.
+
+```{r Correlation between density and residual sugar full data with 95th percentiles, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=residual.sugar,y=density),data=wine)+geom_point(alpha=0.2)+
+ggtitle(label = "Scatterplot between density and residual sugar with 95th percentile")+
+coord_cartesian(xlim=c(0,quantile(wine$residual.sugar,probs = 0.95)),ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))
+```
+
+Removing above 95th percentile values from density and residual sugar,shows a clear relationship between density and residual sugar.
+
+```{r Correlation between density and total sulphur dioxide, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=total.sulfur.dioxide,y=density),data=wine)+geom_point(alpha=0.05)+
+ggtitle(label = "Scatterplot between density and total sulphate dioxide with 95th percentile")
+```
+
+There is little positive correlation between density and total sulphur dioxide.
+```{r Correlation between density and total sulphur dioxide with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=total.sulfur.dioxide,y=density),data=wine)+geom_point(alpha=0.2)+
+ggtitle(label = "Scatterplot between density and total sulphur dioxide with 95th percentile")+
+coord_cartesian(xlim=c(min(wine$total.sulfur.dioxide),quantile(wine$total.sulfur.dioxide,probs = 0.95)),ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))
+```
+scatter plot between density and total sulphur dioxide with 95th percentile values.
+```{r Correlation between density and alcohol with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=alcohol,y=density),data=wine)+geom_jitter(alpha=0.2)+
+ggtitle(label = "Scatterplot between density and alcohol")
+```
+
+```{r Correlation between density and alcohol with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=alcohol,y=density),data=wine)+geom_jitter(alpha=0.1)+
+ggtitle(label = "Scatterplot between density and alcohol with 95th percentile values")+
+coord_cartesian(ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))
+```
+
+From above graphs we can say there is a negative correlation between alcohol and density.
+
+```{r Correlation between density and alcohol with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=alcohol,y=quality),data=wine)+geom_jitter(alpha=0.05)+
+ggtitle(label = "Scatterplot between density and alcohol with 95th percentile values")
+```
