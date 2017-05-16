@@ -403,3 +403,6 @@ From above plot we can say there is a small positive correlaiton between alcohol
 * There is small positive correlation between alcohol and quality of the wine,wines with more alcohol  content are preferred to wines with less alcohol content.
 
 
+### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
+There is negative correlation between density and alcohol content, 
+
