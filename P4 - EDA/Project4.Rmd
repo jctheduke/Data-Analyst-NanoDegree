@@ -13,7 +13,7 @@ library(ggplot2)
 library(dplyr)
 library(corrplot)
 ```
-Data set contains  white variants of the Portuguese "Vinho Verde" wine.
+This Data set contains  white variants of the Portuguese "Vinho Verde" wine.
 Number of Instances of white wine - 4898.
 Number of Attributes: 11 + output attribute(quality)
 ```{r Loading the Data Set, echo=FALSE, message=FALSE, warning=FALSE}
@@ -52,6 +52,8 @@ wine <- read.csv("wineQualityWhites.csv")
 ```{r Name and type of the variables, echo=FALSE, message=FALSE, warning=FALSE}
 # Dropping X ,as it is just a serial number and does not hold any valuable information.
 wine <- wine[,2:13]
+# Saving correlation between different varialbes of wine data.
+M <- cor(wine)
 str(wine)
 ```
 ```{r Summary of attributes, echo=FALSE, message=FALSE, warning=FALSE}
@@ -60,14 +62,21 @@ summary(wine)
 
 
 ```{r Correlation between quality and other variables, echo=FALSE, message=FALSE, warning=FALSE}
+# Correlation between other varialbes and quality.
 cor(x = wine, y = wine$quality)
 ```
 #### Wine Quality
 ```{r Historgram plot of quality, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= quality),data = wine)+geom_bar()+ggtitle(label = "Distribution of Wine Quality")
+# diving quality in to groups or buckets for analysis
+wine$quality.group <- with(wine, cut(wine$quality, breaks = c(2,4,7,10),ordered = TRUE))
+wine$quality <- factor(wine$quality,ordered = TRUE)
+ggplot(aes(x= quality,fill=quality.group),data = wine)+
+  geom_bar()+
+  ggtitle(label = "Distribution of Wine Quality")
 ```
 
-Quality variable is unbalanced.It follows a normal distribution.Wine having quality 6 is the most common wine.
+From the above graph we can see that quality variable is unbalanced.It follows a normal distribution.
+Wine having quality 6 is the most common wine.We can also observe the distribution of the quality groups(low,medium,high),with medium quality(quality between 5 and 7) being the most frequent.Low and high quality wines are less frequent.
 
 #### Fixed.Acidity
 ```{r Distribution of fixed.acidity, echo=FALSE, message=FALSE, warning=FALSE}
@@ -77,18 +86,18 @@ ggplot(aes(x= fixed.acidity),data = wine)+
   scale_x_continuous(breaks = seq(3,12,0.5))
 ```
 
-
-fixed acidity ranges between 3.8 and 14.2. But most of the values are distributed acrsoo 5.5 to 8.5 range.
-Considering only 0.95 quantile data(removing outliers) for visualization.
-
+Fixed acidity ranges between 3.8 and 14.2. But most of the values are distributed across 5.5 to 8.5 range.
+By removing the extreme values(outliers) on the both tails,we can gain more insight into actual distribution of varialble.
+Considering only between  0.02 and 0.98 quantile values of the varialbe for visualization.
 ```{r Distribution of fixed.acidity between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= fixed.acidity),data = wine)+
-  geom_histogram(binwidth = 0.1)+
-  ggtitle(label = "Distribution of fixed.acidity between 5th and 95th percentile")+
-  scale_x_continuous(breaks = seq(5,8,0.25))+
-  coord_cartesian(xlim=c(quantile(wine$fixed.acidity,probs = 0.05),quantile(wine$fixed.acidity,probs = 0.95)))
+  geom_histogram(binwidth = 0.1,fill="light blue")+
+  ggtitle(label = "Distribution of fixed.acidity between 2ndh and 98th percentile")+
+  scale_x_continuous(breaks = seq(4,9,0.25))+
+  coord_cartesian(xlim=c(quantile(wine$fixed.acidity,probs = 0.02),quantile(wine$fixed.acidity,probs = 0.98)))
 ```
-Fixed acidity property of the wine follows mostly a normal distribution between 5th and 95th percentile of the values.
+
+From the above graph we can observe that fixed.acidity between 2nd and 98th percentile of values follows an approximate normal distribution.
 
 #### Volatile Acidity
 
@@ -98,17 +107,18 @@ ggplot(aes(x= volatile.acidity),data = wine)+
   ggtitle(label = "Distribution of volatile.acidity")+
   scale_x_continuous(breaks = seq(0.0800,1.1,0.1))
 ```
-High amounts of volatile.acidity will make the wine taste like vinegar.So,most of the acidity is below 0.48 percent.
 
-```{r Distribution of volatile.acidity with 95 percentile, echo=FALSE, message=FALSE, warning=FALSE}
+High amounts of volatile.acidity will make the wine taste like vinegar.So,most of the acidity is below 0.48 percent.Few of the values are beyond this.We have to investigate,does this values result in low or high quality wines?
+
+```{r Distribution of volatile.acidity between 2nd and  98th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= volatile.acidity),data = wine)+
-  geom_histogram(binwidth = 0.01)+
-  ggtitle(label = "Distribution of volatile.acidity with 95th percentile")+
-  scale_x_continuous(breaks = seq(0.0800,1.1,0.05))+
-  coord_cartesian(xlim=c(0.08,quantile(wine$volatile.acidity,probs = 0.95)))
+  geom_histogram(binwidth = 0.01,fill="light blue")+
+  ggtitle(label = "Distribution of volatile.acidity between 2nd and 95th percentile")+
+  scale_x_continuous(breaks = seq(0.0800,0.5,0.025))+
+  coord_cartesian(xlim=c(quantile(wine$volatile.acidity,probs = 0.02),quantile(wine$volatile.acidity,probs = 0.95)))
 ```
-After removing outliers(95th percent quantile),we can observe that volatile.acidity follows a near normal distribution.
-In futher investigation we need to find if acidity above 0.48 will result in low quality wines.
+
+After removing extreme values (95th percent quantile) on bothe sides,we can observe that volatile.acidity follows a near normal distribution.We can see that 95th of values fall below 0.48 volatile acidity.
 
 #### Citric Acid
 
@@ -118,16 +128,18 @@ ggplot(aes(x= citric.acid),data = wine)+
   ggtitle(label = "Distribution of Ctric Acid")+
   scale_x_continuous(breaks = seq(0,1.5,0.1))
 ```
+
 Citric acid is in very low quantitles when compared to fixed acid percent.It is more in the range of volatile acid range.There are few wines with nearly zero citirc acid percent. Range of citric acid is between 0.00 and 1.66.But most the values reside between 0.2 and 0.5.
 
 ```{r Distribution of citric acid between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= citric.acid),data = wine)+
-  geom_histogram(binwidth = 0.01)+
+  geom_histogram(binwidth = 0.01,fill="light blue")+
   ggtitle(label = "Distribution of Ctric Acid between 5th and 95th percentile")+
   scale_x_continuous(breaks = seq(0,1.5,0.05))+
   coord_cartesian(xlim=c(quantile(wine$citric.acid,probs = 0.05),quantile(wine$citric.acid,probs = 0.95)))
 ```
-Between 5th and 95th percentile, citric acid moslty follows normal distribution.
+
+Between 5th and 95th percentile, citric acid moslty follows normal distribution except for very high value at 0.50.
 
 #### Residual sugar
 ```{r Distribution of Residual Sugar, echo=FALSE, message=FALSE, warning=FALSE}
@@ -136,23 +148,16 @@ ggplot(aes(x= residual.sugar),data = wine)+
   ggtitle(label = "Distribution of Residaul Sugar")+
   scale_x_continuous(breaks = seq(1,66,5))
 ```
-Most of the values in Resudual sugar are between 0-20.But there are few very large values.
+
+Most of the values in Resudual sugar are between 0 and 20.But there are few very large values.Lot of the wines has residual sugar values of  around 1.5 and residual values are uniformly distributed from 3 to 16.But distribution of the residual sugar is little different from the distributions we have seen so far.So,applying log scale to x axis for further investigation.
 ```{r Distribution of Residual Sugar in log scale, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= residual.sugar),data = wine)+
-  geom_histogram(binwidth = 0.05)+
+  geom_histogram(binwidth = 0.05,fill="brown")+
   ggtitle(label = "Distribution of Residaul Sugar in log scale")+
   scale_x_log10(breaks = seq(0,66,10))
 ```
-In log x axis scale, residual sugar follows a bimodal distribution.
 
-```{r Distribution of Residual Sugar between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= residual.sugar),data = wine)+
-  geom_histogram(binwidth = 0.1)+
-  ggtitle(label = "Distribution of Residaul Sugar between 5th and 9th percentile.")+
-  scale_x_continuous(breaks = seq(1,16,1))+
-  coord_cartesian(xlim=c(quantile(wine$residual.sugar,probs = 0.05),quantile(wine$residual.sugar,probs = 0.95)))
-```
-Lot of the wines has residual sugar values of  around 1.5 and residual values are uniformly distributed from 3 to 16.
+After applying the log scale to x-axis we can clearly observe that,residual.sugar follows a bimodal distribution.
 
 #### chlorides
 ```{r Distribution of chlorides, echo=FALSE, message=FALSE, warning=FALSE}
@@ -162,14 +167,16 @@ ggplot(aes(x= chlorides),data = wine)+
   scale_x_continuous(breaks = seq(0.00900,0.34600,0.05))
 ```
 
+From above historgram we can oberseve that most of the chlorides values fall well below 0.06 value.
 ```{r Distribution of chlorides between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= chlorides),data = wine)+
-  geom_histogram(binwidth = 0.001)+
+  geom_histogram(binwidth = 0.001,fill="light blue")+
   ggtitle(label = "Distribution of chlorides between 5th and 95th percentile")+
   scale_x_continuous(breaks = seq(0.00900,0.05900,0.005))+
   coord_cartesian(xlim=c(quantile(wine$chlorides,probs = 0.05),quantile(wine$chlorides,probs = 0.95)))
 ```
-Chlorides between 5th and 95th percentile has normal distribution.
+
+After removing extreme values on both tails,Chlorides values between 5th and 95th percentile follow an approximate normal distribution.
 
 #### Free sulphur dioxide
 ```{r Distribution of Free sulphur dioxide, echo=FALSE, message=FALSE, warning=FALSE}
@@ -178,16 +185,19 @@ ggplot(aes(x= free.sulfur.dioxide),data = wine)+
   ggtitle(label = "Distribution of Free sulphur dioxide")+
   scale_x_continuous(breaks = seq(0,300,20))
 ```
-Most of free sulfur dioxide content is between rangte 0 and 80. There are few very high values of free.sulfur.dioxide.
+
+Most of free sulfur dioxide content is between rangte 0 and 70.Few values of th free sulfur dioxide are a bit high.
 
 ```{r Distribution of Free sulphur dioxide between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= free.sulfur.dioxide),data = wine)+
-  geom_histogram(binwidth = 1)+
+  geom_histogram(binwidth = 1,fill="light blue")+
   ggtitle(label = "Distribution of Free sulphur dioxide between 5th and 95th percentile")+
   scale_x_continuous(breaks = seq(0,70,5))+
   coord_cartesian(xlim=c(quantile(wine$free.sulfur.dioxide,probs = 0.05),quantile(wine$free.sulfur.dioxide,probs = 0.95)))
 ```
-Between 5th and 95th percentile of free.sulfur.dioxide values follow a normal distribution.
+
+As we can oberserve in the above plot,between 5th and 95th percentile of free.sulfur.dioxide values follow a normal distribution.
+
 #### Total sulfur dioxide
 ```{r Distribution of total sulfur dioxide, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= total.sulfur.dioxide),data = wine)+
@@ -195,14 +205,8 @@ ggplot(aes(x= total.sulfur.dioxide),data = wine)+
   ggtitle(label = "Distribution of total sulfur dioxide")+
   scale_x_continuous(breaks = seq(0,400,50))
 ```
-```{r Distribution of total sulfur dioxide between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= total.sulfur.dioxide),data = wine)+
-  geom_histogram(binwidth = 1)+
-  ggtitle(label = "Distribution of total sulfur dioxide between 5th and 95th percentile")+
-  scale_x_continuous(breaks = seq(0,210,10))+
-  coord_cartesian(xlim=c(quantile(wine$total.sulfur.dioxide,probs = 0.05),quantile(wine$total.sulfur.dioxide,probs = 0.95)))
-```
 
+Total sulfur dioxide also follows a simiar distribution pattern to free sulphur dioxide.Most of th total sulphur dioxide values fall in the range between 75 and 225.
 
 #### Density
 
@@ -213,14 +217,16 @@ ggplot(aes(x= density),data = wine)+
   scale_x_continuous(breaks = seq(0.9871,1.0390,0.005))
 ```
 
+Density of the wine also follows similar patterns to other attributes of wine.Most of the dessity values fall between 0.99 and 1.
 
 ```{r Distribution of density with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x= density),data = wine)+
-  geom_histogram(binwidth = 0.0001)+
+  geom_histogram(binwidth = 0.0001,fill="light blue")+
   ggtitle(label = "Distribution of density between 5ht and 95th percentile")+
   scale_x_continuous(breaks = seq(0.9871,1.0390,0.005))+
   coord_cartesian(xlim=c(quantile(wine$density,probs = 0.05),quantile(wine$density,probs = 0.95)))
 ```
+
 After Removing the outliers,Density distribution is little closer to normal distribution.
 
 #### ph
@@ -230,14 +236,8 @@ ggplot(aes(x= pH),data = wine)+
   ggtitle(label = "Distribution of pH levels")+
   scale_x_continuous(breaks = seq(2.7,3.8,0.1))
 ```
-```{r Distribution of ph between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= pH),data = wine)+
-  geom_histogram(binwidth = 0.01)+
-  ggtitle(label = "Distribution of pH levels between 5th and 95th percentile")+
-  scale_x_continuous(breaks = seq(2.7,3.8,0.1))+
-  coord_cartesian(xlim=c(quantile(wine$pH,probs = 0.05),quantile(wine$pH,probs = 0.95)))
-```
-Between 5th and 95th percentile ,pH values follow a normal distribution.
+
+pH values also as other attributes follow,normal distribution with some extreme values.
 
 #### sulphates
 ```{r Distribution of sulphates, echo=FALSE, message=FALSE, warning=FALSE}
@@ -246,15 +246,9 @@ ggplot(aes(x= sulphates),data = wine)+
   ggtitle(label = "Distribution of Sulphate values")+
   scale_x_continuous(breaks = seq(0.2,1,0.05))
 ```
+
 sulphate values lies between 0.2 and 1 values. Most of the suphate values are present between 0.35 to 0.65.
-```{r Distribution of sulphates between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= sulphates),data = wine)+
-  geom_histogram(binwidth = 0.01)+
-  ggtitle(label = "Distribution of sulphates values between 5th and 95th percentile")+
-  scale_x_continuous(breaks = seq(0.2,1,0.05))+
-  coord_cartesian(xlim=c(quantile(wine$sulphates,probs = 0.05),quantile(wine$sulphates,probs = 0.95)))
-```
-between 5th and 95th percentile ,sulphate values follow  a normal distribution.
+Between 5th and 95th percentile ,sulphate values follow  a normal distribution.
 
 #### Alcohol
 ```{r Distribution of alcohol, echo=FALSE, message=FALSE, warning=FALSE}
@@ -263,37 +257,9 @@ ggplot(aes(x= alcohol),data = wine)+
   ggtitle(label = "Distribution of Alcohol")+
   scale_x_continuous(breaks = seq(8,14,0.5))
 ```
-Range of the alcohol is between 8.5 and 14.
 
-```{r Distribution of alcohol between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= alcohol),data = wine)+
-  geom_histogram(binwidth = 0.1)+
-  ggtitle(label = "Distribution of Alcohol between 5th and 95th percentile.")+
-  scale_x_continuous(breaks = seq(8,14,0.25))+
-  coord_cartesian(xlim=c(quantile(wine$alcohol,probs = 0.05),quantile(wine$alcohol,probs = 0.95)))
-```
-Most of the values of the alcohol are present between 8.75 and 12.75.
+Distribution of the alcohol is bit different when compared to other attributes.Range of the alcohol is between 8.5 and 14.With most of the values being around 9.0 and following decreasing frequency trends from then on.
 
-#### total acidity
-```{r total acidity in wine, echo=FALSE, message=FALSE, warning=FALSE}
-wine <- transform(wine,total.acidity = wine$fixed.acidity + wine$volatile.acidity)
-```
-```{r Distribution of total acidity, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= wine$total.acidity),data = wine)+
-  geom_histogram(binwidth = 0.01)+
-  ggtitle(label = "Distribution of total acidity")+
-  scale_x_continuous(breaks = seq(4,12,0.5))
-```
-total acidity percent of wine is between 5.5 and 8.5.
-
-```{r Distribution of total acidity between 5th and 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x= wine$total.acidity),data = wine)+
-  geom_histogram(binwidth = 0.01)+
-  ggtitle(label = "Distribution of total acidity")+
-  scale_x_continuous(breaks = seq(4,12,0.25))+
-  coord_cartesian(xlim=c(quantile(wine$total.acidity,probs = 0.05),quantile(wine$total.acidity,probs = 0.95)))
-```
-Between 5th and 95th percentile values total acidity  follows normal distribution.
 
 # Univariate Analysis
 
@@ -309,28 +275,34 @@ chlorides are distributed between in the range of 0.009 and 0.309.But majority o
 
 
 ### What is/are the main feature(s) of interest in your dataset?
-Almost all of the varialbes(except residual sugar) have a similar distribution.Values between 5th and 95th values follows a normal like distribution.All of the varialbes has values beyond 2 standard deviation from mean.
-Residual sugar forms a bimodal distribution when scaled by log across x-axis.
+Almost all of the varialbes(except residual sugar and alcohol) have a similar distribution.For these attributes,Values between 5th and 95th values follows a normal like distribution.All of the varialbes has values beyond 3 standard deviation from mean.
+Residual sugar forms a bimodal distribution.
 
 ### What other features in the dataset do you think will help support your investigation into your feature(s) of interest?
-Volatile acidity, total sulphur dioxide,residual sugar are directly related to taste of the wine. Improper proportions of these will lead to bad taste of wine.
+Volatile acidity, total sulphur dioxide,residual sugar are directly related to taste of the wine. Improper proportions of these will lead to bad taste of wine. Alcohol,density and chlorides determines forms the important chemical properties of the wine,these properites might contribute a lot to quality of the wine. 
 
 ### Did you create any new variables from existing variables in the dataset?
-Total acidity in the wine is created by combining fixed acidity and volatile acidity.
-Quality variable is changed from numeric format to factor type.
+I created a new varialbe called quality.group from quality.Quality of the wines are divided into three groups,quality of the wine between 2 and 4 is considered low quality wine,between 5 and 7 as medium quality wine and between 7 and 10 as high quality wine.
 
 ### Of the features you investigated, were there any unusual distributions? Did you perform any operations on the data to tidy, adjust, or change the form of the data? If so, why did you do this?
 
-All of the varialbes has few values beyond 3 standard deviatations from the mean.When observed between 5th and 95th values, most of these varialbes followed normal distribution.Does the values beyond 3 standard deviation,directly result in very poor or very good wine quality?,this has to futher investigated.
+All of the varialbes has few values beyond 3 standard deviatations from the mean, When  these variables are observed between 5th and 95th values, most of them followed normal distribution.When distribution of the quality of the wine is observed, most of the wines have medium quality and very few has high and low quality.Does the vaues, which are more than 3 standard deviation from the mean of variables,contribute to quality of the wine.Does these values causes the wine to have a high or low quality.This hypothesis has to be further investigated.
 
 # Bivariate Plots Section
 
 Correlation plot between different variables.
 
 ```{r Correlation between variables, echo=FALSE, message=FALSE, warning=FALSE}
-M <- cor(wine)
 corrplot.mixed(M,tl.pos = 'd')
 ```
+
+
+```{r Correlation between fixed and volatile acidity, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(data=wine) + geom_histogram(aes(x=fixed.acidity), fill="blue")+
+  geom_histogram(aes(x=volatile.acidity), fill="deeppink")+
+  ggtitle(label = "Scatterplot between volatile and fixed acidity")
+```
+
 
 ```{r Correlation between fixed and volatile acidity, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=fixed.acidity,y=volatile.acidity),data=wine)+geom_point(alpha = 0.1)+
@@ -371,27 +343,27 @@ ggplot(aes(x=alcohol,y=density),data=wine)+geom_jitter(alpha=0.2)+
 ggtitle(label = "Scatterplot between density and alcohol")
 ```
 
-```{r Correlation between density and alcohol with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Correlation between density and alcohol with 95th percentiles, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=alcohol,y=density),data=wine)+geom_jitter(alpha=0.1)+
-ggtitle(label = "Scatterplot between density and alcohol with 95th percentile values")+
-coord_cartesian(ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))+
+ggtitle(label = "Scatterplot between density and alcohol")+
+  coord_cartesian(ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))+
 geom_smooth()
 ```
 
+
+
 From above graphs we can say there is a negative correlation between alcohol and density.
 
-```{r Correlation between density and quality with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x=quality,y=density),data=wine)+geom_jitter(alpha=0.2)+
-ggtitle(label = "Scatterplot between density and quality with 95th percentile values")+
-coord_cartesian(ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))
+```{r boxplot of density with quality, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=quality,y=density),data=wine)+geom_boxplot(outlier.colour="red")+
+ggtitle(label = "boxplot of density with quality")
 ```
 
 Above Scatterpot show a negative correlation between Density and quality,but its not so prominent.
 
-```{r Correlation between alcohol and quality with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x=quality,y=alcohol),data=wine)+geom_jitter(alpha=0.2)+
-ggtitle(label = "Scatterplot between alcohol and quality with 95th percentile values")+
-coord_cartesian(ylim = c(min(wine$alcohol),quantile(wine$alcohol,probs = 0.95)))
+```{r boxplot of alcohol with quality, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=quality,y=alcohol),data=wine)+geom_boxplot(outlier.colour="red")+
+ggtitle(label = "boxplot of alcohol with quality")
 ```
 
 From above plot we can say there is a small positive correlaiton between alcohol and quality.
@@ -404,5 +376,59 @@ From above plot we can say there is a small positive correlaiton between alcohol
 
 
 ### Did you observe any interesting relationships between the other features (not the main feature(s) of interest)?
-There is negative correlation between density and alcohol content, 
+There is negative correlation between density and alcohol content and positive relation between density and residual sugar.As sugar content increases density increases or if alcohol(poportinal to water content) increases density decreases.
+When compared to fixed acidity values,volatile acidity values are prettyy less and does not have great impact on overall pH of the wine. Fixed acidity and pH values have negative correlation.
 
+
+### What was the strongest relationship you found?
+Wines residual sugar and density of the wine has a really strong positive correlaiton ship.There is a +0.84 between these variables.
+
+# Multivariate Analysis
+
+```{r Correlation between density and residual sugar full data with alcohol division, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=residual.sugar,y=density,color=cut(alcohol,3)),data=wine)+
+  geom_point(alpha=0.5)+
+  scale_color_brewer(type='qual')+
+  ggtitle(label = "Scatterplot between density and resiudal sugar with alcohol buckets")+
+  coord_cartesian(xlim=c(0,quantile(wine$residual.sugar,probs = 0.95)),ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))
+```
+
+Above plot clearly shows  three distinguished alcohol levels with respect to density and residual sugar.
+```{r Correlation between density and residual sugar full data with alcohol division, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=alcohol,y=density,color=quality.group),data=wine)+
+  geom_point(alpha=0.5)+
+  scale_color_brewer(type='qual',palette = 2)+
+  ggtitle(label = "Scatterplot between density and resiudal sugar with alcohol buckets")+
+  coord_cartesian(xlim=c(0,quantile(wine$residual.sugar,probs = 0.95)),ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))+facet_wrap(~quality.group)
+```
+
+```{r Correlation between chlorides and total sulphur dioxide data with quality division, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=chlorides,y=total.sulfur.dioxide,color=(quality.group)),data=wine)+
+  geom_point(alpha=0.5)+
+  scale_color_brewer(type='qual',palette = 2)+
+  ggtitle(label = "Scatterplot between density and resiudal sugar with quality group distinction")
+```
+```{r Correlation between chlorides and  total sulphur dioxide  with quality facet wrap, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=chlorides,y=total.sulfur.dioxide,color=(quality.group)),data=wine)+
+  geom_point(alpha=0.5)+
+  scale_color_brewer(type='qual',palette = 2)+
+  ggtitle(label = "Scatterplot between density and resiudal sugar with quality group facet wrap")+
+  facet_wrap(~wine$quality.group)
+```
+Although a clear distinction between different quality groups can be observed for higher chloride levels,it difficult to distiquish in lower chlroride levels.
+Facet wrap of different quality groups clearly shows the total sulfur dioxide vs chlorides distribution in low,mid and high quality wines.
+
+```{r Correlation between chlorides and total sulphur dioxide data with quality division, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=quality,y=density,color=(cut(residual.sugar,breaks = c(min(wine$residual.sugar),5.2,max(wine$residual.sugar))))),data=wine)+
+  geom_jitter(alpha=0.5)+
+  scale_color_brewer(type='qual',palette = 1)+
+  ggtitle(label = "Scatterplot between density and resiudal sugar with quality group distinction")+
+  coord_cartesian(ylim = c(min(wine$density),quantile(wine$density,probs = 0.99)))
+```
+
+```{r Correlation between alcohol and fixed acidity  with quality division, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=wine$free.sulfur.dioxide,y=wine$total.sulfur.dioxide,color=(cut(alcohol,2))),data=wine)+
+  geom_point(alpha=0.5)+
+  scale_color_brewer(type='qual',palette =6)+
+  ggtitle(label = "Scatterplot between density and resiudal sugar with quality group distinction")
+```
