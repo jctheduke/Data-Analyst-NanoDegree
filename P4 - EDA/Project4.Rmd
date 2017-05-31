@@ -31,7 +31,7 @@ wine <- read.csv("wineQualityWhites.csv")
 
 * *residual sugar:* the amount of sugar remaining after fermentation stops, it's rare to find wines with less than 1 gram/liter and wines with greater than 45 grams/liter are considered sweet.
 
-* *chlorides:* the amount of salt in the wine
+* *chlorides:* the amount of salt in the wine.
 
 * *free sulfur dioxide:* the free form of SO2 exists in equilibrium between molecular SO2 (as a dissolved gas) and bisulfite ion; it prevents microbial growth and the oxidation of wine
 
@@ -296,25 +296,22 @@ Correlation plot between different variables.
 corrplot.mixed(M,tl.pos = 'd')
 ```
 
-
 ```{r Correlation between fixed and volatile acidity, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(data=wine) + geom_histogram(aes(x=fixed.acidity), fill="blue")+
-  geom_histogram(aes(x=volatile.acidity), fill="deeppink")+
+ggplot(aes(x=fixed.acidity,y=volatile.acidity),data=wine)+
+  geom_point(alpha = 0.1)+
+  geom_smooth()+
   ggtitle(label = "Scatterplot between volatile and fixed acidity")
 ```
 
-
-```{r Correlation between fixed and volatile acidity, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x=fixed.acidity,y=volatile.acidity),data=wine)+geom_point(alpha = 0.1)+
-ggtitle(label = "Scatterplot between volatile and fixed acidity")
-```
-Volatile acidity and fixed acidity does not have any correlation.
+We can see in that points are randomly scattered, except for the dense plots in middle of the plot.
+By observing geom smooth plot,We can clearly see there is no strong correlation between Volatile acidity and fixed acidity.
 
 ```{r Correlation between density and residual sugar full data, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=residual.sugar,y=density),data=wine)+geom_point(alpha=0.05)+
 ggtitle(label = "Scatterplot between density and resiudal sugar")
 ```
-There is clearly a positive correlation between density and residual sugar.
+
+we can  clearly  see a positive correlation between density and residual sugar in above graph.Lets consider the same graph with out extreme values(outliers.)
 
 ```{r Correlation between density and residual sugar full data with 95th percentiles, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=residual.sugar,y=density),data=wine)+geom_point(alpha=0.2)+
@@ -323,21 +320,24 @@ coord_cartesian(xlim=c(0,quantile(wine$residual.sugar,probs = 0.95)),ylim = c(mi
   geom_smooth()
 ```
 
-Removing above 95th percentile values from density and residual sugar,shows a clear relationship between density and residual sugar.
+Removing above 95th percentile values from density and residual sugar,shows a strong relationship between density and residual sugar.
 
 ```{r Correlation between density and total sulphur dioxide, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=total.sulfur.dioxide,y=density),data=wine)+geom_point(alpha=0.05)+
-ggtitle(label = "Scatterplot between density and total sulphate dioxide with 95th percentile")
+ggtitle(label = "Scatterplot between density and total sulphate dioxide")
 ```
 
-There is little positive correlation between density and total sulphur dioxide.
+Above scatterplot suggest a small positive correlation between dessity and total.sulfur.dioxide.
+
 ```{r Correlation between density and total sulphur dioxide with 95th percentile, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=total.sulfur.dioxide,y=density),data=wine)+geom_point(alpha=0.2)+
 ggtitle(label = "Scatterplot between density and total sulphur dioxide with 95th percentile")+
 coord_cartesian(xlim=c(min(wine$total.sulfur.dioxide),quantile(wine$total.sulfur.dioxide,probs = 0.95)),ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))+
   geom_smooth()
 ```
-scatter plot between density and total sulphur dioxide with 95th percentile values.
+
+scatter plot between density and total sulphur dioxide with 95th percentile value clearly shows a positve correlation between these two variables.
+
 ```{r Correlation between density and alcohol, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=alcohol,y=density),data=wine)+geom_jitter(alpha=0.2)+
 ggtitle(label = "Scatterplot between density and alcohol")
@@ -345,33 +345,32 @@ ggtitle(label = "Scatterplot between density and alcohol")
 
 ```{r Correlation between density and alcohol with 95th percentiles, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=alcohol,y=density),data=wine)+geom_jitter(alpha=0.1)+
-ggtitle(label = "Scatterplot between density and alcohol")+
+ggtitle(label = "Scatterplot between density and alcohol with 95th percentile")+
   coord_cartesian(ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))+
 geom_smooth()
 ```
 
+Above two graphs between alcohol and density clearly shows a negative correlation.
 
-
-From above graphs we can say there is a negative correlation between alcohol and density.
-
-```{r boxplot of density with quality, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x=quality,y=density),data=wine)+geom_boxplot(outlier.colour="red")+
-ggtitle(label = "boxplot of density with quality")
+```{r boxplot of density with quality groups, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=quality.group,y=density),data=wine)+geom_boxplot(outlier.colour="red")+
+ggtitle(label = "boxplot of density with quality groups")
 ```
 
-Above Scatterpot show a negative correlation between Density and quality,but its not so prominent.
+From above box plot , high quality group of wines has less density in most cases when compared to low quality and medium quality groups.
 
-```{r boxplot of alcohol with quality, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x=quality,y=alcohol),data=wine)+geom_boxplot(outlier.colour="red")+
-ggtitle(label = "boxplot of alcohol with quality")
+
+```{r boxplot of alcohol with quality group, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=quality.group,y=alcohol),data=wine)+geom_boxplot(outlier.colour="red")+
+ggtitle(label = "boxplot of alcohol with quality group")
 ```
 
-From above plot we can say there is a small positive correlaiton between alcohol and quality.
+Above box plot cleary depicts that high quality wines contains high alcohol content.
 
 # Bivariate Analysis
 
 ### Talk about some of the relationships you observed in this part of the investigation. How did the feature(s) of interest vary with other features in the dataset?
-* There is a small negative correlation between density of the wine and quality of the wine,May be because of the strong positive correlation between residual.sugar and density, wines with high density may tend to  be sweeter,which reduces the taste of the wine.
+* There is a small negative correlation between density of the wine and quality of the wine,may be because of the strong positive correlation between residual.sugar and density,Wines with high density may tend to  be sweeter,which may not be desired  taste of the wine.
 * There is small positive correlation between alcohol and quality of the wine,wines with more alcohol  content are preferred to wines with less alcohol content.
 
 
@@ -383,9 +382,10 @@ When compared to fixed acidity values,volatile acidity values are prettyy less a
 ### What was the strongest relationship you found?
 Wines residual sugar and density of the wine has a really strong positive correlaiton ship.There is a +0.84 between these variables.
 
+
 # Multivariate Analysis
 
-```{r Correlation between density and residual sugar full data with alcohol division, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Correlation between density and residual sugar  alcohol division, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=residual.sugar,y=density,color=cut(alcohol,3)),data=wine)+
   geom_point(alpha=0.5)+
   scale_color_brewer(type='qual')+
@@ -393,42 +393,56 @@ ggplot(aes(x=residual.sugar,y=density,color=cut(alcohol,3)),data=wine)+
   coord_cartesian(xlim=c(0,quantile(wine$residual.sugar,probs = 0.95)),ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))
 ```
 
-Above plot clearly shows  three distinguished alcohol levels with respect to density and residual sugar.
-```{r Correlation between density and residual sugar full data with alcohol division, echo=FALSE, message=FALSE, warning=FALSE}
+Above plot clearly depicts the positive correlation between residual sugar and density.But we can clearly observe that alcohol content is clearly less for high density wines and vice versa.
+
+```{r Correlation between density and alcohol with quality group division, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=alcohol,y=density,color=quality.group),data=wine)+
-  geom_point(alpha=0.5)+
+  geom_point(alpha=0.5,size=2)+
   scale_color_brewer(type='qual',palette = 2)+
-  ggtitle(label = "Scatterplot between density and resiudal sugar with alcohol buckets")+
-  coord_cartesian(xlim=c(0,quantile(wine$residual.sugar,probs = 0.95)),ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))+facet_wrap(~quality.group)
+  ggtitle(label = "Scatterplot between density and alcohol with quality group division")+
+  coord_cartesian(xlim=c(0,quantile(wine$residual.sugar,probs = 0.95)),ylim = c(min(wine$density),quantile(wine$density,probs = 0.95)))+
+  facet_wrap(~quality.group)
 ```
 
-```{r Correlation between chlorides and total sulphur dioxide data with quality division, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x=chlorides,y=total.sulfur.dioxide,color=(quality.group)),data=wine)+
-  geom_point(alpha=0.5)+
-  scale_color_brewer(type='qual',palette = 2)+
-  ggtitle(label = "Scatterplot between density and resiudal sugar with quality group distinction")
-```
+Above facet wrap clealy states the strong negative correlation between density and alcohol but we can see the same trend following across all quality groups.
+
 ```{r Correlation between chlorides and  total sulphur dioxide  with quality facet wrap, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=chlorides,y=total.sulfur.dioxide,color=(quality.group)),data=wine)+
   geom_point(alpha=0.5)+
   scale_color_brewer(type='qual',palette = 2)+
   ggtitle(label = "Scatterplot between density and resiudal sugar with quality group facet wrap")+
-  facet_wrap(~wine$quality.group)
+  facet_wrap(~quality.group,nrow = 3)
 ```
-Although a clear distinction between different quality groups can be observed for higher chloride levels,it difficult to distiquish in lower chlroride levels.
-Facet wrap of different quality groups clearly shows the total sulfur dioxide vs chlorides distribution in low,mid and high quality wines.
 
-```{r Correlation between chlorides and total sulphur dioxide data with quality division, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x=quality,y=density,color=(cut(residual.sugar,breaks = c(min(wine$residual.sugar),5.2,max(wine$residual.sugar))))),data=wine)+
-  geom_jitter(alpha=0.5)+
+Above graph is a scatterplot of total sulfur dioxide and chlorides which facets around quality group distributions.
+We can observe that high quality wines have less chloride values or its just that high quality wines does not have enough samples to spread across.Also,total sulfur dioxide for high quality wines is in range between 100 and 200.
+
+
+```{r Correlation between density and quality with sugar division, echo=FALSE, message=FALSE, warning=FALSE}
+# sugar has bimodal distribution,so dividing sugar around median.
+sugar.division.around.median <- cut(wine$residual.sugar,breaks = c(min(wine$residual.sugar),5.2,max(wine$residual.sugar)))
+ggplot(aes(x=quality,y=density,color=(sugar.division.around.median)),data=wine)+
+  geom_jitter(alpha=0.5,size=2.5)+
   scale_color_brewer(type='qual',palette = 1)+
-  ggtitle(label = "Scatterplot between density and resiudal sugar with quality group distinction")+
+  ggtitle(label = "Scatterplot between density and quality with sugar division")+
   coord_cartesian(ylim = c(min(wine$density),quantile(wine$density,probs = 0.99)))
 ```
+
+We observed that sugar has bimodal distribution in univariate analysis.So,sugar is divided into two groups one below median(5.2) and one above it.Abvoe plot clearly shows the relationship between density and residual.sugar,low sugar values lead to low density wines.Also,with increasing quality ,density of the wine is decreasing. 
+
 
 ```{r Correlation between alcohol and fixed acidity  with quality division, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=wine$free.sulfur.dioxide,y=wine$total.sulfur.dioxide,color=(cut(alcohol,2))),data=wine)+
   geom_point(alpha=0.5)+
   scale_color_brewer(type='qual',palette =6)+
   ggtitle(label = "Scatterplot between density and resiudal sugar with quality group distinction")
+```
+
+```{r Correlation between ph and fixed acidity  with quality division, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=wine$pH ,y=wine$fixed.acidity,color=(quality.group)),data=wine)+
+  geom_point(alpha=0.1)+
+  scale_color_brewer(type='qual',palette =6)+
+  ggtitle(label = "Scatterplot between density and resiudal sugar with quality group distinction")+
+  geom_smooth(aes(shape=quality.group))+
+  facet_wrap(~quality.group,shrink = FALSE)
 ```
