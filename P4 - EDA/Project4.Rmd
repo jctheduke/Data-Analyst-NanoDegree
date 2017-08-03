@@ -431,12 +431,14 @@ ggplot(aes(x=quality,y=density,color=(sugar.division.around.median)),data=wine)+
 We observed that sugar has bimodal distribution in univariate analysis.So,sugar is divided into two groups one below median(5.2) and one above it.Abvoe plot clearly shows the relationship between density and residual.sugar,low sugar values lead to low density wines.Also,with increasing quality ,density of the wine is decreasing. 
 
 
-```{r Correlation between alcohol and fixed acidity  with quality division, echo=FALSE, message=FALSE, warning=FALSE}
-ggplot(aes(x=wine$free.sulfur.dioxide,y=wine$total.sulfur.dioxide,color=(cut(alcohol,2))),data=wine)+
+```{r Correlation between free sulfur dioxide and total sulfur dioxide  with alcohol division, echo=FALSE, message=FALSE, warning=FALSE}
+ggplot(aes(x=free.sulfur.dioxide,y=total.sulfur.dioxide,color=(cut(alcohol,2))),data=wine)+
   geom_point(alpha=0.5)+
   scale_color_brewer(type='qual',palette =6)+
-  ggtitle(label = "Scatterplot between density and resiudal sugar with quality group distinction")
+  ggtitle(label = "Scatterplot between free sulfur dioxide and total sulfur dioxide with alcohol division")
 ```
+
+
 
 ```{r Correlation between ph and fixed acidity  with quality division, echo=FALSE, message=FALSE, warning=FALSE}
 ggplot(aes(x=wine$pH ,y=wine$fixed.acidity,color=(quality.group)),data=wine)+
